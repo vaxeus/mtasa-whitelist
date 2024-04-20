@@ -50,10 +50,10 @@ local database = {
 
 1. Download Node.js from this link [click here](https://nodejs.org/en)
 2. Open cmd in the Whitelist.bot folder
-3. Type npm install to install the packages
+3. Type `npm install` to install the packages
 
 > To install the script:
-1. Go to your server in mta and open f8, type "update" and "start whitelist"
+1. Go to your server in mta and open f8, type `refresh` and `start whitelist`
 
 # Note
 
