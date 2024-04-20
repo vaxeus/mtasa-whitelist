@@ -25,15 +25,13 @@ function generateRandomKey()
 end
 
 function playerConnect(playerNick, playerIP, playerUsername, playerSerial)
-    local query = dbQuery(connection, "SELECT * FROM `keys` WHERE serial=?", playerSerial)
+    local query = dbQuery(connection, "SELECT * FROM `whitelist` WHERE serial=?", playerSerial)
     if not query then
-        outputDebugString("Error in query: " .. dbError())
         return
     end
 
     local result, num_affected_rows, last_insert_id = dbPoll(query, -1)
     if not result then
-        outputDebugString("Error in dbPoll: " .. dbError())
         return
     end
 
@@ -60,11 +58,9 @@ function playerConnect(playerNick, playerIP, playerUsername, playerSerial)
 
     else
         local key = generateRandomKey()
-        local success = dbExec(connection, "INSERT INTO `keys` (`key`, `serial`) VALUES (?, ?)", key, playerSerial)
+        local success = dbExec(connection, "INSERT INTO `whitelist` (`key`, `serial`) VALUES (?, ?)", key, playerSerial)
         if success then
             cancelEvent(true, "Join our Discord Server to verify (discord.gg/mtascripts) and request verify from the bot via the code: " .. key)
-        else
-            outputDebugString("Error in dbExec: " .. dbError())
         end
     end
 
