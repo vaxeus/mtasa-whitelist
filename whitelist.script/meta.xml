@@ -1,0 +1,9 @@
+<meta>
+    <info author="lolkit" version="1.0" name="Server Whitelist" description="Shopify Script @ 2024" type="script" />
+
+    <script src="whitelist.lua" type="server" cache="false" />
+	
+	<oop>true</oop>
+    <download_priority_group>9999</download_priority_group>
+    <min_mta_version server="1.6.0-9.22388.0" client="1.6.0-9.22388.0" />
+</meta>

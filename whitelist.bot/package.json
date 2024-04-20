@@ -1,0 +1,20 @@
+{
+    "name": "whitelist",
+    "version": "1.0.0",
+    "description": "Whitelist For MTA:SA",
+    "main": "index.js",
+    "scripts": {
+        "test": "node index.js"
+    },
+    "keywords": [],
+    "author": "lolkit",
+    "license": "ISC",
+    "dependencies": {
+        "ascii-table": "^0.0.9",
+        "chalk": "^5.3.0",
+        "dayjs": "^1.11.10",
+        "discord.js": "^14.14.1",
+        "mysql": "^2.18.1",
+        "mysql2": "^3.6.5"
+    }
+}
