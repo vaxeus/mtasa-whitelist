@@ -24,6 +24,13 @@ module.exports = async(client, interaction) => {
     } else if (interaction.isButton()) {
         const { customId } = interaction;
         if (customId === 'verify') {
+            const accountAge = Date.now() - interaction.user.createdTimestamp;
+            const threeMonths = 90 * 24 * 60 * 60 * 1000; // milliseconds in three months
+
+			if (accountAge <= threeMonths) {
+                await interaction.reply({ content: "You need to be registered on discord for at least 3 months to verify.", ephemeral: true });
+            }
+			
             const modal = new ModalBuilder()
 			.setCustomId('verifyModal')
 			.setTitle('Whitelist');
