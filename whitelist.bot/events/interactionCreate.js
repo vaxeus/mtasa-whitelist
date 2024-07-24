@@ -24,31 +24,49 @@ module.exports = async(client, interaction) => {
     } else if (interaction.isButton()) {
         const { customId } = interaction;
         if (customId === 'verify') {
-            const accountAge = Date.now() - interaction.user.createdTimestamp;
-            const threeMonths = 90 * 24 * 60 * 60 * 1000; // milliseconds in three months
+            try {
+                const [rows] = await pool.query('SELECT * FROM `whitelist` WHERE `discord` = ? LIMIT 1', [interaction.user.id]);
 
-            if (accountAge <= threeMonths) {
-                return interaction.reply({ content: "You need to be registered on discord for at least 3 months to verify.", ephemeral: true });
+                if (rows.length > 0) {
+                    return interaction.reply({ content: "**You are already verified from this account.**", ephemeral: true });
+                }
+
+                const role = interaction.guild.roles.cache.get(config.linked_role);
+
+                if (interaction.member.roles.cache.has(role.id)) {
+                    return interaction.reply({ content: "**You cannot verify as you already have the required role.**", ephemeral: true });
+                }
+
+                const accountAge = Date.now() - interaction.user.createdTimestamp;
+                const threeMonths = 90 * 24 * 60 * 60 * 1000;
+
+                if (accountAge <= threeMonths) {
+                    return interaction.reply({ content: "**You need to be registered on Discord for at least 3 months to verify.**", ephemeral: true });
+                }
+                
+                const modal = new ModalBuilder()
+                    .setCustomId('verifyModal')
+                    .setTitle('Whitelist');
+
+                const favoriteColorInput = new TextInputBuilder()
+                    .setCustomId('keyInput')
+                    .setLabel("Enter the required code:")
+                    .setMaxLength(7)
+                    .setPlaceholder('Example: 2H1A2TF')
+                    .setStyle(TextInputStyle.Short)
+                    .setRequired(true);
+
+                const secondActionRow = new ActionRowBuilder()
+                    .addComponents(favoriteColorInput);
+
+                modal.addComponents(secondActionRow);
+
+                return interaction.showModal(modal);
+
+            } catch (error) {
+                console.error(error);
+                return interaction.reply({ content: '**An error occurred during verification.**', ephemeral: true });
             }
-            
-            const modal = new ModalBuilder()
-                .setCustomId('verifyModal')
-                .setTitle('Whitelist');
-
-            const favoriteColorInput = new TextInputBuilder()
-                .setCustomId('keyInput')
-                .setLabel("Enter the required code:")
-                .setMaxLength(7)
-                .setPlaceholder('Example: 2H1A2TF')
-                .setStyle(TextInputStyle.Short)
-                .setRequired(true);
-
-            const secondActionRow = new ActionRowBuilder()
-                .addComponents(favoriteColorInput);
-
-            modal.addComponents(secondActionRow);
-
-            return interaction.showModal(modal);
         }
     } else if (interaction.isModalSubmit()) {
         const { customId } = interaction;
@@ -56,7 +74,7 @@ module.exports = async(client, interaction) => {
         if (customId === 'verifyModal') {
             const code = interaction.fields.getTextInputValue('keyInput');
             try {
-                const [rows, fields] = await pool.query("SELECT * FROM `whitelist` WHERE `key`=? LIMIT 1", [code]);
+                const [rows] = await pool.query("SELECT * FROM `whitelist` WHERE `key`=? LIMIT 1", [code]);
 
                 if (rows.length === 1) {
                     const keyData = rows[0];
