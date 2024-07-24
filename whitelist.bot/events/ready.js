@@ -3,8 +3,6 @@ const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v10");
 
 module.exports = async (client) => {
-    console.log(`[+] ${client.user.tag} Logged!`)
-
     client.user.setActivity(config.botStatus)
 
     const rest = new REST({ version: "10" }).setToken(config.token);

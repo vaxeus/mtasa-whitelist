@@ -5,31 +5,31 @@ const fs = require("fs");
 
 const client = new Client({
     partials: [
-      Partials.Message, // for message
-      Partials.Channel, // for text channel
-      Partials.GuildMember, // for guild member
-      Partials.Reaction, // for message reaction
-      Partials.GuildScheduledEvent, // for guild events
-      Partials.User, // for discord user
-      Partials.ThreadMember, // for thread member
+        Partials.Message,
+        Partials.Channel,
+        Partials.GuildMember,
+        Partials.Reaction,
+        Partials.GuildScheduledEvent,
+        Partials.User,
+        Partials.ThreadMember,
     ],
     intents: [
-      GatewayIntentBits.Guilds, // for guild related things
-      GatewayIntentBits.GuildMembers, // for guild members related things
-      GatewayIntentBits.GuildBans, // for manage guild bans
-      GatewayIntentBits.GuildEmojisAndStickers, // for manage emojis and stickers
-      GatewayIntentBits.GuildIntegrations, // for discord Integrations
-      GatewayIntentBits.GuildWebhooks, // for discord webhooks
-      GatewayIntentBits.GuildInvites, // for guild invite managing
-      GatewayIntentBits.GuildVoiceStates, // for voice related things
-      GatewayIntentBits.GuildPresences, // for user presence things
-      GatewayIntentBits.GuildMessages, // for guild messages things
-      GatewayIntentBits.GuildMessageReactions, // for message reactions things
-      GatewayIntentBits.GuildMessageTyping, // for message typing things
-      GatewayIntentBits.DirectMessages, // for dm messages
-      GatewayIntentBits.DirectMessageReactions, // for dm message reaction
-      GatewayIntentBits.DirectMessageTyping, // for dm message typinh
-      GatewayIntentBits.MessageContent, // enable if you need message content things
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildBans,
+        GatewayIntentBits.GuildEmojisAndStickers,
+        GatewayIntentBits.GuildIntegrations,
+        GatewayIntentBits.GuildWebhooks,
+        GatewayIntentBits.GuildInvites,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildMessageTyping,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.DirectMessageReactions,
+        GatewayIntentBits.DirectMessageTyping,
+        GatewayIntentBits.MessageContent,
     ],
 });
 
@@ -68,6 +68,34 @@ fs.readdir("./commands", (err, files) => {
             console.log(err);
         }
     });
+});
+
+client.once('ready', async () => {
+    console.log(`[+] Loaded Client: Bot is ready!`);
+
+    const guilds = client.guilds.cache;
+
+    guilds.forEach(async (guild) => {
+        if (guild.id !== config.guard_id) {
+            try {
+                await guild.leave();
+                console.log(`[+] Leaving server: ${guild.name} (${guild.id})`);
+            } catch (error) {
+                console.error(`[-] Failed to leave server ${guild.id}: ${error.message}`);
+            }
+        }
+    });
+});
+
+client.on('guildCreate', async (guild) => {
+    if (guild.id !== config.guard_id) {
+        try {
+            await guild.leave();
+            console.log(`[+] Leaving server: ${guild.name} (${guild.id})`);
+        } catch (error) {
+            console.error(`[-] Failed to leave server ${guild.id}: ${error.message}`);
+        }
+    }
 });
 
 client.login(config.token).catch(e => {
