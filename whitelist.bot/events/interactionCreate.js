@@ -27,28 +27,28 @@ module.exports = async(client, interaction) => {
             const accountAge = Date.now() - interaction.user.createdTimestamp;
             const threeMonths = 90 * 24 * 60 * 60 * 1000; // milliseconds in three months
 
-			if (accountAge <= threeMonths) {
-                await interaction.reply({ content: "You need to be registered on discord for at least 3 months to verify.", ephemeral: true });
+            if (accountAge <= threeMonths) {
+                return interaction.reply({ content: "You need to be registered on discord for at least 3 months to verify.", ephemeral: true });
             }
-			
+            
             const modal = new ModalBuilder()
-			.setCustomId('verifyModal')
-			.setTitle('Whitelist');
+                .setCustomId('verifyModal')
+                .setTitle('Whitelist');
 
             const favoriteColorInput = new TextInputBuilder()
-			.setCustomId('keyInput')
-			.setLabel("Enter the required code:")
-            .setMaxLength(7)
-            .setPlaceholder('Example: 2H1A2TF')
-			.setStyle(TextInputStyle.Short)
-            .setRequired(true);
-            
+                .setCustomId('keyInput')
+                .setLabel("Enter the required code:")
+                .setMaxLength(7)
+                .setPlaceholder('Example: 2H1A2TF')
+                .setStyle(TextInputStyle.Short)
+                .setRequired(true);
+
             const secondActionRow = new ActionRowBuilder()
-            .addComponents(favoriteColorInput);
+                .addComponents(favoriteColorInput);
 
             modal.addComponents(secondActionRow);
-            
-            await interaction.showModal(modal);
+
+            return interaction.showModal(modal);
         }
     } else if (interaction.isModalSubmit()) {
         const { customId } = interaction;
@@ -67,24 +67,27 @@ module.exports = async(client, interaction) => {
                                 await pool.query('UPDATE `whitelist` SET `discord` = ?, `enabled` = 1 WHERE `key` = ?', [interaction.user.id, code]);
 
                                 const role = interaction.guild.roles.cache.get(config.linked_role);
-                                await interaction.member.roles.add(role);
-
-                                await interaction.reply({ content: `**We have successfully added your serial (${keyData.serial}) to the whitelist**`, ephemeral: true });
+                                if (role) {
+                                    await interaction.member.roles.add(role);
+                                    return interaction.reply({ content: `**We have successfully added your serial (${keyData.serial}) to the whitelist**`, ephemeral: true });
+                                } else {
+                                    return interaction.reply({ content: `**Role not found. Please check the configuration.**`, ephemeral: true });
+                                }
                             } else {
-                                await interaction.reply({ content: '**You cannot add this serial to a whitelist, it is banned**', ephemeral: true });
+                                return interaction.reply({ content: '**You cannot add this serial to a whitelist, it is banned**', ephemeral: true });
                             }
                         } else {
-                            await interaction.reply({ content: '**This Key has been used by another Discord Account.**', ephemeral: true });
+                            return interaction.reply({ content: '**This Key has been used by another Discord Account.**', ephemeral: true });
                         }
                     } else {
-                        await interaction.reply({ content: '**This Key has been activated From another serial.**', ephemeral: true });
+                        return interaction.reply({ content: '**This Key has been activated From another serial.**', ephemeral: true });
                     }
                 } else {
-                    await interaction.reply({ content: '**Invalid key, Enter the key correctly.**', ephemeral: true });
+                    return interaction.reply({ content: '**Invalid key, Enter the key correctly.**', ephemeral: true });
                 }
             } catch (error) {
                 console.error(error);
-                await interaction.reply({ content: '**An error occurred during verification.**', ephemeral: true });
+                return interaction.reply({ content: '**An error occurred during verification.**', ephemeral: true });
             }
         }
     }

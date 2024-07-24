@@ -16,8 +16,12 @@ module.exports = {
     run: async (client, interaction) => {
         const mentionedChannel = interaction.options.getChannel('channel');
 
+        if (!config.owners.includes(interaction.user.id)) {
+            return interaction.reply({ content: 'You are not authorized to use this command.', ephemeral: true });
+        }
+
         if (setupChannels.has(mentionedChannel.id)) {
-            return interaction.reply('Whitelist has already been sent to this channel.');
+            return interaction.reply({ content: 'Whitelist has already been sent to this channel.', ephemeral: true });
         }
 
         const embed = new EmbedBuilder()
