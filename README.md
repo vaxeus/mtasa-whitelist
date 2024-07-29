@@ -2,18 +2,24 @@
 
 It allows players to link your Discord account in order to join the server
 
+# Requirements
+
+1. Install node.js [Download](https://nodejs.org/en)
+2. Buy a host or create a localhost for bot, database [ Localhost database: [AppServ](https://www.appserv.org/en/download/) ]
+3. Create a bot on your discord account from here: [click here](https://discord.com/developers/applications) | It's a video of how to build the bot [click here](https://www.youtube.com/watch?v=GvK-ZigEV4Q)
+
 # Installation
 
-1. You need to setup your bot from this link [click here](https://discord.com/developers/applications) | It's a video of how to build the bot [click here](https://www.youtube.com/watch?v=GvK-ZigEV4Q)
-2. Add the bot on your server
-3. Next setup, go to the `config.js` file and add your configuration bot
+1. Add the bot on your server
+2. Next setup, go to the `config.js` file and add your configuration bot
 
 ```js
 module.exports = {
-      Token: "", // your bot token
-      botStatus: "Shopify Whitelist", // bot status
-      Owners: [""], // Owners ID
-      linked_role: '', // The role of whitelisted members
+      'token': "", // your bot token
+      'botStatus': "Shopify Whitelist", // bot status
+      'owners': [""], // Owners ID
+      'guard_id': '', // server id
+      'linked_role': '' // The role id of whitelisted members
 }
 ```
 
@@ -31,8 +37,8 @@ const pool = mysql.createPool({
 });
 ```
 
-4. Then install the script on your server `Your server patch/mods/deathmatch/resources`
-5. Add the configuration in the `whitelist/whitelist.lua` file.
+4. Then install the `whitelist.script` on your server `Your server patch/mods/deathmatch/resources`
+5. Add the configuration in the `whitelist.script/whitelist.lua` file.
 
 ```lua
 local database = {
@@ -40,22 +46,23 @@ local database = {
       name = "", -- your phpmyadmin username
       pass = "", -- your phpmyadmin password
       host = "", -- the IP address of the host
-      Port=3306
 }
 ```
 
-# How to start the bot/script
+# Starting Application
 
-> To install the bot:
+> Install and run the bot:
 
-1. Download Node.js from this link [click here](https://nodejs.org/en)
-2. Open cmd in the Whitelist.bot folder
+1. Open Cmd (click win, r at keyboard and type cmd)
+2. select your `whitelist.bot` folder `cd <folder path>`
 3. Type `npm install` to install the packages
+4. after finish install packages type node.
 
-> To install the script:
-1. Go to your server in mta and open f8, type `refresh` and `start whitelist`
+> Install script at server:
+
+1. after add the script on the server open f8 and type `refresh`
+2. to start the script type `start whitelist.script`
 
 # Note
 
-If you need any help, head over to our Discord server
-- https://discord.gg/mtascripts
+If you need any help, head over to our Discord server [Link](https://discord.gg/8TkJ2s8NtD)
